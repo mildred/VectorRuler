@@ -42,6 +42,10 @@ var checkUnit = function(){
         ruler.unitsAbbr= "cm."
         ruler.pixelsPerUnit = pixelsPerCM
     }
+    else if (ruler.units === "other"){
+        ruler.unitsAbbr= "?"
+        ruler.pixelsPerUnit = parseFloat(prompt("How many pixels for this unit ?\nper inch: " + pixelsPerInch + "\nper centimeter: " + pixelsPerCM))
+    }
     else{
         ruler.pixelsPerUnit = 0
         console.error("Unexpected unit value. Unit value: "+rulerUnits)
@@ -128,6 +132,10 @@ var constructRuler = function(){
             var tickHeight
             tickHeight = ruler.heightPixels*Math.pow(ruler.levelToLevelMultiplier,exponentIndex)
 
+            if (ruler.subUnitBase == '10' && tickIndex % 10 == 5 && exponentIndex > 0) {
+               tickHeight = tickHeight * 1.5;
+            }
+
             var tickSpacing = ruler.pixelsPerUnit/(Math.pow(ruler.subUnitBase,exponentIndex))
             //spacing between ticks, the fundemental datum on a ruler :-)
             var finalTick = false
@@ -144,8 +152,13 @@ var tick = function(tickHeight, horizPosition, tickIndex, offsetTickIndex, expon
     //exponentIndex is 0-6, how small it is, 6 being smallest
     var x1 = horizPosition + (tickSpacing * tickIndex)
     var x2 = x1 //x === x because lines are vertical
-    var y1 = 0//all lines start at top of screen
-    var y2 = tickHeight//downward
+    if (ruler.reversed) {
+      var y1 = ruler.heightPixels - tickHeight
+      var y2 = ruler.heightPixels
+    } else {
+      var y1 = 0 //all lines start at top of screen
+      var y2 = tickHeight //downward
+    }
 
     if (ruler.tickArray[ruler.masterTickIndex]===undefined || ruler.redundant) {
         // if no tick exists already, or if we want redundant lines, draw the tick.
@@ -156,7 +169,11 @@ var tick = function(tickHeight, horizPosition, tickIndex, offsetTickIndex, expon
 
         ruler.tickArray[ruler.masterTickIndex]=true //register the tick so it is not duplicated
             if (exponentIndex === 0) {//if is a primary tick, it needs a label
-                tickLabel(x1,y2,finalTick,offsetTickIndex,exponentIndex)
+                if (ruler.reversed) {
+                    tickLabel(x1,y1+15,finalTick,offsetTickIndex,exponentIndex)
+                } else {
+                    tickLabel(x1,y2,finalTick,offsetTickIndex,exponentIndex)
+                }
             }
     }   
 }
@@ -193,6 +210,7 @@ var updateVariables = function(){
     ruler.units =  $("input:radio[name=rulerUnits]:checked'").val();
     ruler.subUnitBase = $("input:radio[name=subUnits]:checked'").val();
     ruler.redundant =  $("input:checkbox[name=redundant]:checked'").val();
+    ruler.reversed =  $("input:checkbox[name=reversed]:checked'").val();
     ruler.width = $('#rulerWidth').val() ;
     ruler.height = $('#rulerHeight').val() ;
     ruler.subUnitExponent = $('#subUnitExponent').val() ;

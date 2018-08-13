@@ -7,7 +7,7 @@
 <meta name="keywords" content="Ilustrator,Vector,Vector Ruler, SVG, SVG ruler, Javascript SVG">
 <meta name="author" content="Robb Godshaw">
 <link rel="stylesheet" type="text/css" href="style.css">
-<script type='text/javascript' src='//ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js'></script>
+<script type='text/javascript' src='jquery-1.6.4.js'></script>
 <script type="text/javascript" src="paper-full.js"></script>
 <script type="text/javascript" src="rulerGenerator.js"></script>
 
@@ -44,6 +44,8 @@
                     
                 <Input type = "radio"  name="rulerUnits" value="centimeters" >
                     Centimeters
+                <Input type = "radio"  name="rulerUnits" value="other" >
+                    Other
                 <br>
                 <Input type = "radio"  name= "subUnits" value = "2"   checked>
                     Fractonal            
@@ -83,6 +85,7 @@
                 <span></span>
             </label>
                 <input type="checkbox" name="redundant" id="redundant" >Draw redundant lines<br>
+                <input type="checkbox" name="reversed" id="reversed" >Reversed<br>
     </form>
     <form id="svgexpform" method="post" action="http://download-data-uri.appspot.com/" >
         <b>Filename: </b>
